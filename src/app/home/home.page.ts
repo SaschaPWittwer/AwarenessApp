@@ -15,9 +15,11 @@ export class HomePage implements OnInit {
   }
 
   private async test(): Promise<void> {
+    setInterval(async () => {
+      let pos = await this.geolocation.getCurrentPosition();
+      console.log(pos.coords.latitude, pos.coords.longitude);
+    }, 2000);
 
-    let pos = await this.geolocation.getCurrentPosition();
-    console.log(pos.coords.latitude, pos.coords.longitude);
   }
 
 }
