@@ -1,25 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage {
 
-  constructor(private geolocation: Geolocation) { }
-
-  ngOnInit(): void {
-    this.test();
-  }
-
-  private async test(): Promise<void> {
-    setInterval(async () => {
-      let pos = await this.geolocation.getCurrentPosition();
-      console.log(pos.coords.latitude, pos.coords.longitude);
-    }, 2000);
-
-  }
+  constructor() { }
 
 }
