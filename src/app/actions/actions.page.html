@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>actions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-toolbar>
+  <ion-buttons slot="secondary">
+    <ion-button (click)="addNewAction()">
+      <ion-icon slot="icon-only" name="add"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
+<ion-content>
+  <ion-list>
+    <ion-item-sliding *ngFor="let action of actions">
+      <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="deleteAction(action)">Delete</ion-item-option>
+      </ion-item-options>
+
+      <ion-item>
+        <ng-container *ngIf="action.type === 1; else exit">
+          <ion-icon name="log-in" size="large" slot="start"></ion-icon>
+        </ng-container>
+        <ng-template #exit>
+          <ion-icon name="log-out" size="large" slot="start"></ion-icon>
+        </ng-template>
+        <ion-label>
+          <h3>{{action.name}}</h3>
+          <p>Coordinations: {{action.lat}} / {{action.lng}}</p>
+          <ng-container *ngIf="action.startTracking; else disable">
+            <p>Ask to enable tracking mode</p>
+          </ng-container>
+          <ng-template #disable>
+            <p>Ask to disable tracking mode</p>
+          </ng-template>
+
+        </ion-label>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

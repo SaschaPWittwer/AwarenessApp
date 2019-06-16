@@ -8,23 +8,36 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class AwarenessService {
 
   private readonly earthRadius: number = 6371;
-
   private lastPosition: Geoposition;
+  private tracker: number;
 
   private _currentSpeed: BehaviorSubject<number> = new BehaviorSubject<number>(0.0);
   public readonly currentSpeed: Observable<number> = this._currentSpeed.asObservable();
 
+
   constructor(private geolocation: Geolocation) {
-    setInterval(async () => {
+  }
+
+  public startTracking(): void {
+    this.tracker = setInterval(async () => {
       let newPos = await this.geolocation.getCurrentPosition();
       // We need two points to calculate the speed
       if (this.lastPosition) {
         let speed = this.calculateSpeed(this.lastPosition, newPos);
-        console.log(speed);
+        // Cannot be slower than zero m/s
+        if (speed < 0)
+          speed = 0.0;
         this._currentSpeed.next(speed);
       }
       this.lastPosition = newPos;
     }, 500);
+  }
+
+  public stopTracking(): void {
+    if (!this.tracker)
+      return;
+
+    clearInterval(this.tracker);
   }
 
   private calculateSpeed(pos1: Geoposition, pos2: Geoposition): number {

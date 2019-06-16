@@ -19,6 +19,11 @@ export class AppComponent {
       title: 'Awareness',
       url: '/awareness',
       icon: 'analytics'
+    },
+    {
+      title: 'Actions',
+      url: '/actions',
+      icon: 'grid'
     }
   ];
 

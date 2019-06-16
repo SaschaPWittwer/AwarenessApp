@@ -14,7 +14,8 @@ const routes: Routes = [
   {
     path: 'awareness',
     loadChildren: './awareness/awareness.module#AwarenessPageModule'
-  }
+  },
+  { path: 'actions', loadChildren: './actions/actions.module#ActionsPageModule' }
 ];
 
 @NgModule({

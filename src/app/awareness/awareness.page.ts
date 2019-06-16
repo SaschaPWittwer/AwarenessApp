@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AwarenessService } from '../services/awareness.service';
 
 @Component({
@@ -6,13 +6,19 @@ import { AwarenessService } from '../services/awareness.service';
   templateUrl: './awareness.page.html',
   styleUrls: ['./awareness.page.scss'],
 })
-export class AwarenessPage implements OnInit {
+export class AwarenessPage implements OnInit, OnDestroy {
+
+  currentTransportationMethod: string;
 
   constructor(public awarenessService: AwarenessService) {
 
   }
 
   ngOnInit() {
+    this.awarenessService.startTracking();
   }
 
+  ngOnDestroy() {
+    this.awarenessService.stopTracking();
+  }
 }
