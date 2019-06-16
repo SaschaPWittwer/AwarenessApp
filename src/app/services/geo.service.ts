@@ -12,7 +12,11 @@ import { DatabaseService } from './database.service';
 export class GeoService {
 
   constructor(private geolocation: Geolocation, private geofence: Geofence, private database: DatabaseService) {
-    this.geofence.initialize();
+    this.geofence.initialize().then(
+      // resolved promise does not return a value
+      () => console.log('Geofence Plugin Ready'),
+      (err) => console.log(err)
+    );
   }
 
   public async addFenceToCurrentLocation(name: string, radius: number, type: 1 | 2, startTracking: boolean): Promise<void> {
@@ -31,7 +35,10 @@ export class GeoService {
       }
     }
 
-    await this.geofence.addOrUpdate(fence);
+    await this.geofence.addOrUpdate(fence).then(
+      () => console.log('Geofence added'),
+      (err) => console.log('Geofence failed to add')
+    );
 
     let action: Action = {
       fenceId: fence.id,
