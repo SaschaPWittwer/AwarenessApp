@@ -16,24 +16,9 @@ export class ActionsPage implements OnInit {
 
   constructor(private storage: Storage, private geofence: Geofence, private modalController: ModalController) {
     this.actions = new Array<Action>();
-    this.actions.push({
-      lat: 0,
-      lng: 0,
-      startTracking: true,
-      type: this.geofence.TransitionType.EXIT,
-      name: 'Home'
-    });
-    this.actions.push({
-      lat: 0,
-      lng: 0,
-      startTracking: false,
-      type: this.geofence.TransitionType.ENTER,
-      name: 'Home'
-    });
   }
 
   ngOnInit() {
-
   }
 
   async addNewAction(): Promise<void> {

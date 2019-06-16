@@ -9,7 +9,7 @@ export class AwarenessService {
 
   private readonly earthRadius: number = 6371;
   private lastPosition: Geoposition;
-  private tracker: number;
+  private tracker: any;
 
   private _currentSpeed: BehaviorSubject<number> = new BehaviorSubject<number>(0.0);
   public readonly currentSpeed: Observable<number> = this._currentSpeed.asObservable();

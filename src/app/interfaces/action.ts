@@ -5,5 +5,7 @@ export interface Action {
     lng: number;
     type: number,
     startTracking: boolean,
-    name: string
+    name: string,
+    fenceId: string,
+    notificationId: number
 }

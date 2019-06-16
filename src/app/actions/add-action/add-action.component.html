@@ -1,4 +1,23 @@
-<ion-item>
-  <ion-label position="stacked">Default Label</ion-label>
-  <ion-input></ion-input>
-</ion-item>
+<form [formGroup]="actionForm" (ngSubmit)="onSubmit()">
+  <ion-item>
+    <ion-label position="stacked">Name</ion-label>
+    <ion-input formControlName="name" required></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Radius in meters</ion-label>
+    <ion-input type="number" formControlName="radius" min="10" max="200" required></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">When</ion-label>
+    <ion-select placeholder="Select One" formControlName="type" required>
+      <ion-select-option [value]="geofence.TransitionType.ENTER">Enter</ion-select-option>
+      <ion-select-option [value]="geofence.TransitionType.EXIT">Leave</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Start tracking?</ion-label>
+    <ion-checkbox formControlName="startTracking"></ion-checkbox>
+  </ion-item>
+  <ion-button type="submit" [disabled]="!actionForm.valid">Save</ion-button>
+  <ion-button (click)="onCancel()">Cancel</ion-button>
+</form>
