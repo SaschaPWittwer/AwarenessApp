@@ -10,6 +10,11 @@
 
 `npm install -g cordova@7.1.0`
 
+## Plugins needed (Should already be installed in package.json)
+* https://github.com/jupesoftware/cordova-plugin-geofence
+* cordova-plugin-geolocation
+* cordova-sqlite-storage
+
 ## Run on android device
 `ionic cordova platform add android`
 
