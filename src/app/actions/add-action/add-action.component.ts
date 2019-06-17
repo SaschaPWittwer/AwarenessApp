@@ -29,13 +29,14 @@ export class AddActionComponent {
     let loader = await this.loadingController.create({
       message: 'Saving action'
     });
-    loader.present();
+    await loader.present();
     let name = this.actionForm.value.name as string;
     let radius = this.actionForm.value.radius as number;
     let type = this.actionForm.value.type as 1 | 2;
     let startTracking = this.actionForm.value.startTracking as boolean;
     await this.geoService.addFenceToCurrentLocation(name, radius, type, startTracking);
-    loader.dismiss();
+    await loader.dismiss();
+    this.modalController.dismiss();
   }
 
   onCancel(): void {

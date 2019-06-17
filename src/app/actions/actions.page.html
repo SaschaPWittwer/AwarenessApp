@@ -15,7 +15,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-item-sliding *ngFor="let action of actions">
+    <ion-item-sliding *ngFor="let action of actions | async">
       <ion-item-options side="end">
         <ion-item-option color="danger" (click)="deleteAction(action)">Delete</ion-item-option>
       </ion-item-options>

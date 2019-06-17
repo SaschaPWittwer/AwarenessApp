@@ -21,6 +21,7 @@ export class GeoService {
 
   public async addFenceToCurrentLocation(name: string, radius: number, type: 1 | 2, startTracking: boolean): Promise<void> {
     let currentPos = await this.geolocation.getCurrentPosition();
+    let notificationText = startTracking ? 'Would you like to enable tracking yourself?' : 'Would you like to disable tracking yourself?';
     let fence = {
       id: uuid.v4(),
       latitude: currentPos.coords.latitude,
@@ -28,16 +29,20 @@ export class GeoService {
       radius: radius,
       transitionType: type,
       notification: {
-        id: Math.random() * Math.random() * 1000,
-        title: 'You crossed a fence',
-        text: `${startTracking ? 'Start' : 'End'} tracking yourself?`,
+        id: new Date().getMilliseconds(),
+        title: "AwarenessApp needs your attention",
+        text: notificationText,
         openAppOnClick: true
       }
     }
 
-    await this.geofence.addOrUpdate(fence).then(
-      () => console.log('Geofence added'),
-      (err) => console.log('Geofence failed to add')
+    this.geofence.addOrUpdate(fence).then(
+      () => {
+        console.log('Geofence added');
+      },
+      (err) => {
+        console.log('Geofence failed to add');
+      }
     );
 
     let action: Action = {
@@ -51,7 +56,6 @@ export class GeoService {
     };
 
     await this.database.saveAction(action);
-
   }
 
 

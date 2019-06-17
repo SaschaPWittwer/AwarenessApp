@@ -4,6 +4,8 @@ import { Geofence } from '@ionic-native/geofence/ngx';
 import { ModalController } from '@ionic/angular';
 import { Action } from '../interfaces/action';
 import { AddActionComponent } from './add-action/add-action.component';
+import { DatabaseService } from '../services/database.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-actions',
@@ -12,24 +14,25 @@ import { AddActionComponent } from './add-action/add-action.component';
 })
 export class ActionsPage implements OnInit {
 
-  actions: Array<Action>;
+  actions: Observable<Array<Action>>;
 
-  constructor(private storage: Storage, private geofence: Geofence, private modalController: ModalController) {
-    this.actions = new Array<Action>();
+  constructor(private modalController: ModalController, private dbService: DatabaseService) {
+
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.actions = this.dbService.actions;
   }
 
   async addNewAction(): Promise<void> {
     const modal = await this.modalController.create({
       component: AddActionComponent
     });
-    return await modal.present();
+    await modal.present();
   }
 
   deleteAction(action: Action): void {
-    console.log(`Drop action ${action.name}`);
+    this.dbService.dropAction(action);
   }
 
 }

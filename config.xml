@@ -96,4 +96,5 @@
     <plugin name="cordova-plugin-geofence" spec="git+https://github.com/jupesoftware/cordova-plugin-geofence.git">
         <variable name="GOOGLE_API_VERSION" value="11.8.0" />
     </plugin>
+    <engine name="android" spec="7.1.4" />
 </widget>

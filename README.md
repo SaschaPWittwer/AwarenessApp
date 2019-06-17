@@ -3,12 +3,14 @@
 ## Install needed stuff
 `npm i -g ionic`
 
-`npm i -g cordova@7.1.0`
+`npm i -g cordova@8.1.2`
+
+`npm i -g native-run`
 
 ## Downgrade Cordova (If already installed)
 `npm uninstall -g cordova`
 
-`npm install -g cordova@7.1.0`
+`npm install -g cordova@8.1.2`
 
 ## Plugins needed (Should already be installed in package.json)
 * https://github.com/jupesoftware/cordova-plugin-geofence
