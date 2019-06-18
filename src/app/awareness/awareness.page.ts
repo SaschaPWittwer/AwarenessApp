@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ForegroundService } from '@ionic-native/foreground-service/ngx';
 import { AwarenessService } from '../services/awareness.service';
 
 @Component({
@@ -10,29 +9,32 @@ import { AwarenessService } from '../services/awareness.service';
 export class AwarenessPage implements OnInit, OnDestroy {
 
   currentTransportationMethod: string;
-  foregroundServiceRunning: boolean;
+  trackingText: string;
+  speedInMS: string;
 
-  constructor(public awarenessService: AwarenessService, private foregroundService: ForegroundService) {
+  constructor(public awarenessService: AwarenessService) {
 
   }
 
   ngOnInit() {
-    // this.awarenessService.startTracking();
+    this.awarenessService.isTracking.subscribe(isTracking => {
+      if (isTracking)
+        this.trackingText = 'Disable tracking';
+      else
+        this.trackingText = 'Enable tracking';
+    });
+    this.awarenessService.currentSpeed.subscribe(speed => {
+      if (speed <= 0)
+        this.speedInMS = '-';
+      else
+        this.speedInMS = speed.toPrecision(6);
+    })
   }
 
   ngOnDestroy() {
-    // this.awarenessService.stopTracking();
   }
 
   toggleTracking(): void {
-    if (this.foregroundServiceRunning) {
-      this.awarenessService.stopTracking();
-      this.foregroundService.stop();
-    } else {
-      this.awarenessService.startTracking();
-      this.foregroundService.start("Your getting tracked!", "The AwarenessApp is tracking your movement.");
-    }
-
-    this.foregroundServiceRunning = !this.foregroundServiceRunning;
+    this.awarenessService.toggleTracking();
   }
 }

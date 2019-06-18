@@ -10,7 +10,7 @@
 <ion-content>
   <ion-card>
     <ion-card-header>
-      <ion-card-subtitle>Current speed: {{awarenessService.currentSpeed | async}}</ion-card-subtitle>
+      <ion-card-subtitle>Current speed: {{speedInMS}} M/S</ion-card-subtitle>
       <ion-card-title>It looks like your using a bike (Is it yours?!)</ion-card-title>
     </ion-card-header>
 
@@ -19,5 +19,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-button (click)="toggleTracking()" expand="full">Toggle tracking</ion-button>
+  <ion-button (click)="toggleTracking()" expand="full"
+    [color]="(awarenessService.isTracking | async) ? 'danger' : 'primary'">
+    {{trackingText}}</ion-button>
 </ion-content>
