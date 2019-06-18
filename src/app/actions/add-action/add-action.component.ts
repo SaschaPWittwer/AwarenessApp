@@ -21,7 +21,7 @@ export class AddActionComponent {
       name: new FormControl('', Validators.required),
       radius: new FormControl(50, [Validators.required, Validators.min(10), Validators.max(200)]),
       type: new FormControl(null, Validators.required),
-      startTracking: new FormControl(false)
+      action: new FormControl(null, Validators.required)
     });
   }
 
@@ -33,7 +33,7 @@ export class AddActionComponent {
     let name = this.actionForm.value.name as string;
     let radius = this.actionForm.value.radius as number;
     let type = this.actionForm.value.type as 1 | 2;
-    let startTracking = this.actionForm.value.startTracking as boolean;
+    let startTracking = this.actionForm.value.action === 'enable';
     await this.geoService.addFenceToCurrentLocation(name, radius, type, startTracking);
     await loader.dismiss();
     this.modalController.dismiss();

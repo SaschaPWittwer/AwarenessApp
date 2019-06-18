@@ -4,6 +4,7 @@ import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
 import * as uuid from 'uuid';
 import { Action } from '../interfaces/action';
 import { DatabaseService } from './database.service';
+import { ToastController } from '@ionic/angular';
 
 
 @Injectable({
@@ -11,12 +12,25 @@ import { DatabaseService } from './database.service';
 })
 export class GeoService {
 
-  constructor(private geolocation: Geolocation, private geofence: Geofence, private database: DatabaseService) {
+  constructor(private geolocation: Geolocation, private geofence: Geofence, private database: DatabaseService, private toastController: ToastController) {
     this.geofence.initialize().then(
       // resolved promise does not return a value
       () => console.log('Geofence Plugin Ready'),
       (err) => console.log(err)
     );
+
+    // todo -> Move
+    this.geofence.onNotificationClicked().subscribe(async notificationData => {
+      const toast = await this.toastController.create({
+        message: 'Notification clicked. Id: ' + notificationData.id,
+        duration: 2000
+      });
+      toast.present();
+    });
+  }
+
+  public async removeFence(id: string): Promise<void> {
+    await this.geofence.remove(id);
   }
 
   public async addFenceToCurrentLocation(name: string, radius: number, type: 1 | 2, startTracking: boolean): Promise<void> {

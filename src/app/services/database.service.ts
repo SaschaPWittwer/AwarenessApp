@@ -34,15 +34,12 @@ export class DatabaseService {
     }
 
     let id = typeof action === "string" ? action : action.fenceId;
-    let toDelete = actions.findIndex(_ => {
-      return _.fenceId == id;
+    // Remove action from stored list
+    actions = actions.filter(_ => {
+      return _.fenceId != id;
     });
 
-    if (toDelete === -1)
-      return;
-
-    actions = actions.splice(toDelete, 1);
-
+    // Save new list to storage again
     await this.storage.set(this.ACTIONS, actions);
     this.updateActions();
   }

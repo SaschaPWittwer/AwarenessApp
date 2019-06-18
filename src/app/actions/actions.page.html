@@ -1,17 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>actions</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Actions</ion-title>
   </ion-toolbar>
 </ion-header>
-
-
-<ion-toolbar>
-  <ion-buttons slot="secondary">
-    <ion-button (click)="addNewAction()">
-      <ion-icon slot="icon-only" name="add"></ion-icon>
-    </ion-button>
-  </ion-buttons>
-</ion-toolbar>
 
 <ion-content>
   <ion-list>
@@ -41,4 +35,9 @@
       </ion-item>
     </ion-item-sliding>
   </ion-list>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addNewAction()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

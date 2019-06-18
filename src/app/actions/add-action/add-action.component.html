@@ -15,9 +15,12 @@
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label position="stacked">Start tracking?</ion-label>
-    <ion-checkbox formControlName="startTracking"></ion-checkbox>
+    <ion-label position="stacked">Action</ion-label>
+    <ion-select placeholder="Select one" formControlName="action" required>
+      <ion-select-option value="enable">Enable tracking</ion-select-option>
+      <ion-select-option value="disable">Disabled tracking</ion-select-option>
+    </ion-select>
   </ion-item>
-  <ion-button type="submit" [disabled]="!actionForm.valid">Save</ion-button>
-  <ion-button (click)="onCancel()">Cancel</ion-button>
+  <ion-button type="submit" [disabled]="!actionForm.valid" color="primary" expand="full">Save</ion-button>
+  <ion-button (click)="onCancel()" color="warning" expand="full">Cancel</ion-button>
 </form>

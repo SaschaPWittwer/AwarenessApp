@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^7.2.2",
     "@angular/router": "^7.2.2",
     "@ionic-native/core": "^5.0.0",
+    "@ionic-native/foreground-service": "^5.8.0",
     "@ionic-native/geofence": "^5.8.0",
     "@ionic-native/geolocation": "^5.7.0",
     "@ionic-native/splash-screen": "^5.0.0",
@@ -32,6 +33,7 @@
     "cordova-plugin-add-swift-support": "1.7.1",
     "cordova-plugin-compat": "1.2.0",
     "cordova-plugin-device": "2.0.2",
+    "cordova-plugin-foreground-service": "1.1.1",
     "cordova-plugin-geofence": "git+https://github.com/jupesoftware/cordova-plugin-geofence.git",
     "cordova-plugin-geolocation": "4.0.1",
     "cordova-plugin-ionic-keyboard": "^2.0.5",
@@ -98,7 +100,8 @@
       "cordova-sqlite-storage": {},
       "cordova-plugin-geofence": {
         "GOOGLE_API_VERSION": "11.8.0"
-      }
+      },
+      "cordova-plugin-foreground-service": {}
     },
     "platforms": [
       "android"

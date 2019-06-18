@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Storage } from '@ionic/storage';
-import { Geofence } from '@ionic-native/geofence/ngx';
 import { ModalController } from '@ionic/angular';
 import { Action } from '../interfaces/action';
 import { AddActionComponent } from './add-action/add-action.component';
 import { DatabaseService } from '../services/database.service';
+import { GeoService } from '../services/geo.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -16,7 +15,7 @@ export class ActionsPage implements OnInit {
 
   actions: Observable<Array<Action>>;
 
-  constructor(private modalController: ModalController, private dbService: DatabaseService) {
+  constructor(private modalController: ModalController, private dbService: DatabaseService, private geeService: GeoService) {
 
   }
 
@@ -31,8 +30,9 @@ export class ActionsPage implements OnInit {
     await modal.present();
   }
 
-  deleteAction(action: Action): void {
-    this.dbService.dropAction(action);
+  async deleteAction(action: Action): Promise<void> {
+    await this.geeService.removeFence(action.fenceId);
+    await this.dbService.dropAction(action);
   }
 
 }

@@ -24,9 +24,10 @@ export class AwarenessService {
       // We need two points to calculate the speed
       if (this.lastPosition) {
         let speed = this.calculateSpeed(this.lastPosition, newPos);
-        // Cannot be slower than zero m/s
-        if (speed < 0)
-          speed = 0.0;
+        console.log(speed);
+        // // Cannot be slower than zero m/s
+        // if (speed < 0)
+        //   speed = 0.0;
         this._currentSpeed.next(speed);
       }
       this.lastPosition = newPos;
