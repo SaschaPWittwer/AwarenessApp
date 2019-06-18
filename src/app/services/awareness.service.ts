@@ -31,7 +31,7 @@ export class AwarenessService {
         this._currentSpeed.next(speed);
       }
       this.lastPosition = newPos;
-    }, 500);
+    }, 5000);
   }
 
   public stopTracking(): void {
