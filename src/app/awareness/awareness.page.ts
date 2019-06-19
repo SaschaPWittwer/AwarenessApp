@@ -10,7 +10,7 @@ export class AwarenessPage implements OnInit, OnDestroy {
 
   currentTransportationMethod: string;
   trackingText: string;
-  speedInMS: string;
+  speedInKmh: string;
 
   constructor(public awarenessService: AwarenessService) {
 
@@ -25,9 +25,9 @@ export class AwarenessPage implements OnInit, OnDestroy {
     });
     this.awarenessService.currentSpeed.subscribe(speed => {
       if (speed <= 0)
-        this.speedInMS = '-';
+        this.speedInKmh = '-';
       else
-        this.speedInMS = speed.toPrecision(6);
+        this.speedInKmh = Math.round(speed * 3.6).toString();
     })
   }
 

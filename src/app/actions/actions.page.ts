@@ -31,7 +31,7 @@ export class ActionsPage implements OnInit {
   }
 
   async deleteAction(action: Action): Promise<void> {
-    await this.geeService.removeFence(action.fenceId);
+    // await this.geeService.removeFence(action.id);
     await this.dbService.dropAction(action);
   }
 

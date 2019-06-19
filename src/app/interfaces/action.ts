@@ -6,6 +6,8 @@ export interface Action {
     type: number,
     startTracking: boolean,
     name: string,
-    fenceId: string,
-    notificationId: number
+    id: string,
+    notificationText: string,
+    radius: number,
+    within: boolean // Value which determines if the user is currently within this geofence
 }

@@ -14,7 +14,7 @@ export class DatabaseService {
   public actions: Observable<Array<Action>> = this._actions.asObservable();
 
   constructor(private storage: Storage) {
-    this.updateActions();
+    this.reloadActions();
   }
 
   public async saveAction(action: Action): Promise<void> {
@@ -24,7 +24,7 @@ export class DatabaseService {
     }
     actions.push(action);
     await this.storage.set(this.ACTIONS, actions);
-    this.updateActions();
+    this.reloadActions();
   }
 
   public async dropAction(action: Action | string): Promise<void> {
@@ -33,18 +33,44 @@ export class DatabaseService {
       return;
     }
 
-    let id = typeof action === "string" ? action : action.fenceId;
+    let id = typeof action === "string" ? action : action.id;
     // Remove action from stored list
     actions = actions.filter(_ => {
-      return _.fenceId != id;
+      return _.id != id;
     });
 
     // Save new list to storage again
     await this.storage.set(this.ACTIONS, actions);
-    this.updateActions();
+    this.reloadActions();
   }
 
-  private async updateActions(): Promise<void> {
+  public async updateAction(action: Action): Promise<void> {
+    let actions = await this.storage.get(this.ACTIONS) as Array<Action>;
+    if (!actions) {
+      return;
+    }
+
+    actions.forEach(a => {
+      if (a.id !== action.id)
+        return;
+
+      a = action;
+    });
+
+    // Save new list to storage again
+    await this.storage.set(this.ACTIONS, actions);
+    this.reloadActions();
+  }
+
+  public async getActions(): Promise<Array<Action>> {
+    let actions = await this.storage.get(this.ACTIONS) as Array<Action>;
+    if (!actions) {
+      return new Array<Action>();
+    }
+    return actions;
+  }
+
+  private async reloadActions(): Promise<void> {
     let actions = await this.storage.get(this.ACTIONS) as Array<Action>;
     if (!actions) {
       actions = new Array<Action>();
