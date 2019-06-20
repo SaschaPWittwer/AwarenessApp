@@ -9,6 +9,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Geofence } from '@ionic-native/geofence/ngx';
 import { ForegroundService } from '@ionic-native/foreground-service/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -28,7 +29,8 @@ import { AppRoutingModule } from './app-routing.module';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     Geolocation,
     Geofence,
-    ForegroundService
+    ForegroundService,
+    LocalNotifications
   ],
   bootstrap: [AppComponent]
 })
