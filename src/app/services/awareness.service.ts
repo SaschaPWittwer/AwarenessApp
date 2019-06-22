@@ -15,9 +15,13 @@ export class AwarenessService {
 
   private readonly earthRadius: number = 637100; // In meters
   private trackerSub: Subscription;
+  private fenceSub: Subscription;
 
   private _isTracking: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public readonly isTracking: Observable<boolean> = this._isTracking.asObservable();
+
+  private _isFencing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public readonly isFencing: Observable<boolean> = this._isFencing.asObservable();
 
   private _currentSpeed: BehaviorSubject<number> = new BehaviorSubject<number>(0.0);
   public readonly currentSpeed: Observable<number> = this._currentSpeed.asObservable();
@@ -28,6 +32,94 @@ export class AwarenessService {
 
   constructor(private geolocation: Geolocation, private database: DatabaseService,
     private foregroundService: ForegroundService, private localNotifications: LocalNotifications) {
+    this.localNotifications.on('yes').subscribe(notification => {
+      let shouldStartTracking = notification.data.startTracking;
+      if (shouldStartTracking) {
+        this.startTracking();
+      } else {
+        this.stopTracking();
+      }
+    });
+  }
+
+  public toggleTracking(): void {
+    if (this._isTracking.value) {
+      this.stopTracking();
+    } else {
+      this.startTracking();
+    }
+  }
+
+  public toggleFencing(): void {
+    if (this._isFencing.value) {
+      this.stopFencing();
+    } else {
+      this.startFencing();
+    }
+  }
+
+  private stopTracking(): void {
+    if (!this._isTracking.value)
+      return;
+
+    this.trackerSub.unsubscribe();
+    this._isTracking.next(false);
+    this.handleForegroundService();
+  }
+
+  private stopFencing(): void {
+    if (!this._isFencing.value)
+      return;
+
+    this.fenceSub.unsubscribe();
+    this._isFencing.next(false);
+    this.handleForegroundService();
+  }
+
+  private handleForegroundService(): void {
+    if (!this._isFencing.value && !this._isTracking.value) {
+      this.foregroundService.stop();
+    } else {
+      this.foregroundService.start("AwarenessApp is running", "Your geolocations are getting tracked!");
+    }
+  }
+
+  private startTracking(): void {
+    this.trackerSub = timer(0, 3000).subscribe(async () => {
+      let pos = await this.getBestPossibleGeolocation();
+      if (!pos)
+        return;
+
+      if (pos.coords.speed) {
+        this._currentSpeed.next(pos.coords.speed);
+      } else {
+        // We need two points to calculate the speed
+        if (this._lastPosition.value) {
+          let speed = this.calculateSpeed(this._lastPosition.value, pos);
+          console.log(speed);
+          if (!Number.isNaN(speed) && Number.isFinite(speed))
+            this._currentSpeed.next(speed);
+          else
+            this._currentSpeed.next(0);
+        }
+      }
+      this._lastPosition.next(pos);
+    });
+    this._isTracking.next(true);
+    this.handleForegroundService();
+  }
+
+  private startFencing(): void {
+    this.fenceSub = timer(0, 30000).subscribe(async () => {
+      let pos = await this.getBestPossibleGeolocation();
+      if (!pos)
+        return;
+
+      await this.checkFences(pos);
+      this._lastPosition.next(pos);
+    });
+    this._isFencing.next(true);
+    this.handleForegroundService();
   }
 
   private async checkFences(currentPos: Geoposition): Promise<void> {
@@ -51,46 +143,21 @@ export class AwarenessService {
   }
 
   private async scheduleNotification(action: Action): Promise<void> {
+    let title = action.type === 1 ? `You entered ${action.name}` : `You left ${action.name}`;
     this.localNotifications.schedule({
-      title: `Entered fence: ${action.name}`,
+      title: title,
       text: action.notificationText,
-      launch: true
-    });
-  }
-
-  public toggleTracking(): void {
-    if (this._isTracking.value) {
-      this.stopTracking();
-    } else {
-      this.startTracking();
-    }
-  }
-
-  private startTracking(): void {
-    this.foregroundService.start("Your getting tracked!", "The AwarenessApp is tracking your movement.");
-    this.trackerSub = timer(0, 5000).subscribe(async () => {
-      let pos = await this.getBestPossibleGeolocation();
-      if (!pos)
-        return;
-      // While calculating the speed we can async check for fences
-      this.checkFences(pos);
-
-      if (pos.coords.speed) {
-        this._currentSpeed.next(pos.coords.speed);
-      } else {
-        // We need two points to calculate the speed
-        if (this._lastPosition.value) {
-          let speed = this.calculateSpeed(this._lastPosition.value, pos);
-          console.log(speed);
-          if (!Number.isNaN(speed) && Number.isFinite(speed))
-            this._currentSpeed.next(speed);
-          else
-            this._currentSpeed.next(0);
+      launch: true,
+      data: {
+        startTracking: action.type === 2
+      },
+      actions: [
+        {
+          id: 'yes',
+          title: 'Yes'
         }
-      }
-      this._lastPosition.next(pos);
+      ]
     });
-    this._isTracking.next(true);
   }
 
   private async getBestPossibleGeolocation(): Promise<Geoposition> {
@@ -114,15 +181,6 @@ export class AwarenessService {
     }
 
     return nextViablePos;
-  }
-
-  private stopTracking(): void {
-    if (!this.isTracking)
-      return;
-
-    this.trackerSub.unsubscribe();
-    this.foregroundService.stop();
-    this._isTracking.next(false);
   }
 
   public async addFenceToCurrentLocation(name: string, radius: number, type: 1 | 2, startTracking: boolean): Promise<void> {

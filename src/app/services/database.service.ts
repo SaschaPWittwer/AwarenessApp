@@ -53,8 +53,8 @@ export class DatabaseService {
     actions.forEach(a => {
       if (a.id !== action.id)
         return;
-
-      a = action;
+      // Currently only the value within must be updated (Could change later on)
+      a.within = action.within;
     });
 
     // Save new list to storage again
