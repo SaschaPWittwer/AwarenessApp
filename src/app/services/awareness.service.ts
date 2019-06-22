@@ -184,7 +184,10 @@ export class AwarenessService {
   }
 
   public async addFenceToCurrentLocation(name: string, radius: number, type: 1 | 2, startTracking: boolean): Promise<void> {
-    let currentPos = await this.geolocation.getCurrentPosition();
+    let currentPos = await this.getBestPossibleGeolocation();
+    while (currentPos === null) {
+      currentPos = await this.getBestPossibleGeolocation();
+    }
     let notificationText = startTracking ? 'Would you like to enable tracking yourself?' : 'Would you like to disable tracking yourself?';
 
     let action: Action = {
