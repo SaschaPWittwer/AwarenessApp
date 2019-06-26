@@ -7,11 +7,15 @@ import * as uuid from 'uuid';
 import { DatabaseService } from './database.service';
 import { Action } from '../interfaces/action';
 import { ToastController } from '@ionic/angular';
+import { PublictransportgeoinformationService } from './publictransportgeoinformation.service';
 
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class AwarenessService {
+  
 
   private readonly earthRadius: number = 637100; // In meters
   private trackerSub: Subscription;
@@ -29,9 +33,12 @@ export class AwarenessService {
   private _lastPosition: BehaviorSubject<Geoposition> = new BehaviorSubject<Geoposition>(null);
   public lastPosition: Observable<Geoposition> = this._lastPosition.asObservable();
 
+  private _currentUserAction: BehaviorSubject<UserAction> = new BehaviorSubject<UserAction>(UserAction.WALKING);
+  public currentUserAction: Observable<UserAction> = this._currentUserAction.asObservable();
+
 
   constructor(private geolocation: Geolocation, private database: DatabaseService,
-    private foregroundService: ForegroundService, private localNotifications: LocalNotifications) {
+    private foregroundService: ForegroundService, private localNotifications: LocalNotifications, private publicTransPortGeoInformationService: PublictransportgeoinformationService) {
     this.localNotifications.on('yes').subscribe(notification => {
       let shouldStartTracking = notification.data.startTracking;
       if (shouldStartTracking) {
@@ -104,6 +111,7 @@ export class AwarenessService {
         }
       }
       this._lastPosition.next(pos);
+      this.CheckIfOnPublicTransport();
     });
     this._isTracking.next(true);
     this.handleForegroundService();
@@ -245,4 +253,16 @@ export class AwarenessService {
   private toRad(n: number): number {
     return n * Math.PI / 180;
   }
+
+  private CheckIfOnPublicTransport(){
+    this.publicTransPortGeoInformationService.findPointOnLineStrings(this._lastPosition.value.coords.longitude, this._lastPosition.value.coords.latitude);
+  }
+  
+}
+
+export enum UserAction {
+  WALKING,
+  PUBLICTRANSPORT,
+  DRIVING,
+  CYCLING
 }
