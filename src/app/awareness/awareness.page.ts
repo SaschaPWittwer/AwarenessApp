@@ -16,11 +16,8 @@ export class AwarenessPage implements OnInit, OnDestroy {
   speedInKmh: string;
   userAction: string;
   imageUrl: string;
-  weather: Promise<Weather>;
-  longitude: number;
-  latitude: number;
 
-  constructor(public awarenessService: AwarenessService, private weatherService: WeatherService) {
+  constructor(public awarenessService: AwarenessService, public weatherService: WeatherService) {
     
   }
 
@@ -39,14 +36,9 @@ export class AwarenessPage implements OnInit, OnDestroy {
         this.speedInKmh = Math.round(speed * 3.6).toString();
       }
     });
-    this.awarenessService.lastPosition.subscribe(pos => {
-      this.longitude = pos.coords.longitude;
-      this.latitude = pos.coords.latitude;
-    });
     this.awarenessService.currentUserAction.subscribe(userAction => {
       this.userAction = UserAction[userAction].toLowerCase();
       this.imageUrl = '../assets/images/' + this.userAction + '.svg';
-      this.weather = this.weatherService.getCurrentWeather(this.longitude, this.latitude);
     });
   }
 

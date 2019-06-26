@@ -44,7 +44,7 @@ export class AwarenessService {
 
 
   constructor(private geolocation: Geolocation, private database: DatabaseService,
-    private foregroundService: ForegroundService, private localNotifications: LocalNotifications, private publicTransPortGeoInformationService: PublictransportgeoinformationService, private httpClient: HttpClient, private weatherService: WeatherService) {
+    private foregroundService: ForegroundService, private localNotifications: LocalNotifications, private publicTransPortGeoInformationService: PublictransportgeoinformationService, private httpClient: HttpClient) {
     this.localNotifications.on('yes').subscribe(notification => {
       let shouldStartTracking = notification.data.startTracking;
       if (shouldStartTracking) {
@@ -269,7 +269,6 @@ export class AwarenessService {
     const currentSpeed = this._currentSpeed.value;
     const longitude = pos.coords.longitude;
     const latitude = pos.coords.latitude;
-    let weather = await this.weatherService.getCurrentWeather(longitude, latitude);
     
     if ( currentSpeed >= this.cyclingThreshold && currentSpeed < this.drivingThreshold ) {
       this._currentUserAction.next(UserAction.CYCLING);

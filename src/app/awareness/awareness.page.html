@@ -12,11 +12,11 @@
     <ion-card-header>
       <ion-card-subtitle>Current speed: {{speedInKmh}} km/h</ion-card-subtitle>
       <ion-card-title>It looks like your {{userAction}}</ion-card-title>
-      <ion-card-subtitle>It is {{ (weather | async).condition }} and the Current temperature is: {{ (weather | async).temp }}C</ion-card-subtitle>
+      <ion-card-subtitle>It is {{ (this.weatherService.weather | async).condition }} and the Current temperature is: {{ (this.weatherService.weather | async).temp }}C</ion-card-subtitle>
     </ion-card-header>
 
     <ion-card-content>
-      <ion-img [src]=" (weather | async).icon " style="width: 100px; height: auto;"></ion-img>
+      <ion-img [src]=" (this.weatherService.weather | async).icon " style="width: 100px; height: auto;"></ion-img>
       <ion-img src={{imageUrl}}></ion-img>
     </ion-card-content>
   </ion-card>
