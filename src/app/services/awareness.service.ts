@@ -36,6 +36,9 @@ export class AwarenessService {
   private _currentUserAction: BehaviorSubject<UserAction> = new BehaviorSubject<UserAction>(UserAction.WALKING);
   public currentUserAction: Observable<UserAction> = this._currentUserAction.asObservable();
 
+  private readonly cyclingThreshold: number = 7;
+  private readonly drivingThreshold: number = 25; 
+
 
   constructor(private geolocation: Geolocation, private database: DatabaseService,
     private foregroundService: ForegroundService, private localNotifications: LocalNotifications, private publicTransPortGeoInformationService: PublictransportgeoinformationService) {
@@ -111,7 +114,7 @@ export class AwarenessService {
         }
       }
       this._lastPosition.next(pos);
-      this.CheckIfOnPublicTransport();
+      this.decideUserAction();
     });
     this._isTracking.next(true);
     this.handleForegroundService();
@@ -254,10 +257,21 @@ export class AwarenessService {
     return n * Math.PI / 180;
   }
 
-  private CheckIfOnPublicTransport(){
-    this.publicTransPortGeoInformationService.findPointOnLineStrings(this._lastPosition.value.coords.longitude, this._lastPosition.value.coords.latitude);
+  private decideUserAction(){
+    const currentSpeed = this._currentSpeed.value;
+    const longitude = this._lastPosition.value.coords.longitude;
+    const latitude = this._lastPosition.value.coords.latitude;
+    if ( currentSpeed >= this.cyclingThreshold || currentSpeed < this.drivingThreshold ) {
+      this._currentUserAction.next(UserAction.CYCLING);
+    } else if ( currentSpeed >= this.drivingThreshold || !this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) { 
+      this._currentUserAction.next(UserAction.DRIVING);
+    } else if ( currentSpeed >= this.drivingThreshold || !this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) {
+      this._currentUserAction.next(UserAction.PUBLICTRANSPORT);
+    } else {
+      this._currentUserAction.next(UserAction.WALKING);
+    }
+
   }
-  
 }
 
 export enum UserAction {
