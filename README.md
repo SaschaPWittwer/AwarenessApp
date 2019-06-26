@@ -67,6 +67,9 @@ Contains:
 
 Data from: https://opendata.swiss/de/dataset/schienennetz
 
+To have GeoJson, we converted the MapInfo Data with QGIS to GeoJson.
+At the moment it is imported directly from the assets folder. A better solution would be a http backend service which has the data in a database and calculates the distance on request.
+
 
 ## Look and feel
 ![Home Screen](./screenshots/home.jpg)
