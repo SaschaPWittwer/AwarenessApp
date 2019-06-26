@@ -1,5 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AwarenessService } from '../services/awareness.service';
+import { AwarenessService, UserAction } from '../services/awareness.service';
+import { WeatherService } from '../services/weather.service';
+import { Weather } from '../models/weather';
+
 
 @Component({
   selector: 'app-awareness',
@@ -11,24 +14,32 @@ export class AwarenessPage implements OnInit, OnDestroy {
   currentTransportationMethod: string;
   trackingText: string;
   speedInKmh: string;
+  userAction: string;
+  imageUrl: string;
 
-  constructor(public awarenessService: AwarenessService) {
-
+  constructor(public awarenessService: AwarenessService, public weatherService: WeatherService) {
+    
   }
 
   ngOnInit() {
     this.awarenessService.isTracking.subscribe(isTracking => {
-      if (isTracking)
+      if (isTracking) {
         this.trackingText = 'Disable tracking';
-      else
+      } else {
         this.trackingText = 'Enable tracking';
+      }
     });
     this.awarenessService.currentSpeed.subscribe(speed => {
-      if (speed <= 0)
+      if (speed <= 0) {
         this.speedInKmh = '-';
-      else
+      } else {
         this.speedInKmh = Math.round(speed * 3.6).toString();
-    })
+      }
+    });
+    this.awarenessService.currentUserAction.subscribe(userAction => {
+      this.userAction = UserAction[userAction].toLowerCase();
+      this.imageUrl = '../assets/images/' + this.userAction + '.svg';
+    });
   }
 
   ngOnDestroy() {

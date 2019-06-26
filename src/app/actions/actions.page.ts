@@ -3,7 +3,6 @@ import { ModalController } from '@ionic/angular';
 import { Action } from '../interfaces/action';
 import { AddActionComponent } from './add-action/add-action.component';
 import { DatabaseService } from '../services/database.service';
-import { GeoService } from '../services/geo.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -15,7 +14,7 @@ export class ActionsPage implements OnInit {
 
   actions: Observable<Array<Action>>;
 
-  constructor(private modalController: ModalController, private dbService: DatabaseService, private geeService: GeoService) {
+  constructor(private modalController: ModalController, private dbService: DatabaseService) {
 
   }
 
