@@ -15,7 +15,8 @@
     </ion-card-header>
 
     <ion-card-content>
-      <ion-img src=[imageUrl]></ion-img>
+      <ion-img [src]=" (weather | async).icon "></ion-img>
+      <ion-img src={{imageUrl}}></ion-img>
     </ion-card-content>
   </ion-card>
 

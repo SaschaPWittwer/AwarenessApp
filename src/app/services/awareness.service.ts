@@ -8,6 +8,8 @@ import { DatabaseService } from './database.service';
 import { Action } from '../interfaces/action';
 import { ToastController } from '@ionic/angular';
 import { PublictransportgeoinformationService } from './publictransportgeoinformation.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { WeatherService } from './weather.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +35,7 @@ export class AwarenessService {
   private _lastPosition: BehaviorSubject<Geoposition> = new BehaviorSubject<Geoposition>(null);
   public lastPosition: Observable<Geoposition> = this._lastPosition.asObservable();
 
-  private _currentUserAction: BehaviorSubject<UserAction> = new BehaviorSubject<UserAction>(UserAction.WALKING);
+  private _currentUserAction: BehaviorSubject<UserAction> = new BehaviorSubject<UserAction>(UserAction.STANDING);
   public currentUserAction: Observable<UserAction> = this._currentUserAction.asObservable();
 
   private readonly cyclingThreshold: number = 7;
@@ -41,7 +43,7 @@ export class AwarenessService {
 
 
   constructor(private geolocation: Geolocation, private database: DatabaseService,
-    private foregroundService: ForegroundService, private localNotifications: LocalNotifications, private publicTransPortGeoInformationService: PublictransportgeoinformationService) {
+    private foregroundService: ForegroundService, private localNotifications: LocalNotifications, private publicTransPortGeoInformationService: PublictransportgeoinformationService, private httpClient: HttpClient, private weatherService: WeatherService) {
     this.localNotifications.on('yes').subscribe(notification => {
       let shouldStartTracking = notification.data.startTracking;
       if (shouldStartTracking) {
@@ -257,20 +259,23 @@ export class AwarenessService {
     return n * Math.PI / 180;
   }
 
-  private decideUserAction(){
+  //Decide if the user is standing, walking, driving and using public transportt
+  private async decideUserAction(){
     const currentSpeed = this._currentSpeed.value;
     const longitude = this._lastPosition.value.coords.longitude;
     const latitude = this._lastPosition.value.coords.latitude;
+    let weather = await this.weatherService.getCurrentWeather(longitude, latitude);
     if ( currentSpeed >= this.cyclingThreshold || currentSpeed < this.drivingThreshold ) {
       this._currentUserAction.next(UserAction.CYCLING);
     } else if ( currentSpeed >= this.drivingThreshold || !this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) { 
       this._currentUserAction.next(UserAction.DRIVING);
-    } else if ( currentSpeed >= this.drivingThreshold || !this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) {
+    } else if ( currentSpeed >= this.drivingThreshold || this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) {
       this._currentUserAction.next(UserAction.PUBLICTRANSPORT);
-    } else {
+    } else if ( currentSpeed > 0 || currentSpeed < this.cyclingThreshold){
       this._currentUserAction.next(UserAction.WALKING);
-    }
-
+    } else {
+      this._currentUserAction.next(UserAction.STANDING);
+    }   
   }
 }
 
@@ -278,5 +283,6 @@ export enum UserAction {
   WALKING,
   PUBLICTRANSPORT,
   DRIVING,
-  CYCLING
+  CYCLING,
+  STANDING
 }

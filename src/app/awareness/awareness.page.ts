@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AwarenessService, UserAction } from '../services/awareness.service';
+import { WeatherService } from '../services/weather.service';
+import { Weather } from '../models/weather';
 
 
 @Component({
@@ -12,11 +14,14 @@ export class AwarenessPage implements OnInit, OnDestroy {
   currentTransportationMethod: string;
   trackingText: string;
   speedInKmh: string;
-  userAction: UserAction;
+  userAction: string;
   imageUrl: string;
+  weather: Promise<Weather>;
+  longitude: number;
+  latitude: number;
 
-  constructor(public awarenessService: AwarenessService) {
-
+  constructor(public awarenessService: AwarenessService, private weatherService: WeatherService) {
+    
   }
 
   ngOnInit() {
@@ -34,17 +39,14 @@ export class AwarenessPage implements OnInit, OnDestroy {
         this.speedInKmh = Math.round(speed * 3.6).toString();
       }
     });
+    this.awarenessService.lastPosition.subscribe(pos => {
+      this.longitude = pos.coords.longitude;
+      this.latitude = pos.coords.latitude;
+    });
     this.awarenessService.currentUserAction.subscribe(userAction => {
-      this.userAction = userAction;
-      if(userAction === UserAction.WALKING){
-        this.imageUrl = '../assets/images/bicycle.svg';
-      } else if (userAction === UserAction.CYCLING){
-        this.imageUrl = '../assets/images/bicycle.svg';
-      } else if (userAction === UserAction.PUBLICTRANSPORT){
-        this.imageUrl = '../assets/images/train.svg';
-      } else if (userAction === UserAction.DRIVING){
-        this.imageUrl = '../assets/images/car.svg';
-      }
+      this.userAction = UserAction[userAction].toLowerCase();
+      this.imageUrl = '../assets/images/' + this.userAction + '.svg';
+      this.weather = this.weatherService.getCurrentWeather(this.longitude, this.latitude);
     });
   }
 
