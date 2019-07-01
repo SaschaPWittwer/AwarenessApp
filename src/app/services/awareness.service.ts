@@ -17,9 +17,9 @@ import { WeatherService } from './weather.service';
 
 
 export class AwarenessService {
-  
 
-  private readonly earthRadius: number = 637100; // In meters
+
+  private readonly earthRadius: number = 6371000; // In meters
   private trackerSub: Subscription;
   private fenceSub: Subscription;
   private userActionSub: Subscription;
@@ -40,7 +40,7 @@ export class AwarenessService {
   public currentUserAction: Observable<UserAction> = this._currentUserAction.asObservable();
 
   private readonly cyclingThreshold: number = 7;
-  private readonly drivingThreshold: number = 25; 
+  private readonly drivingThreshold: number = 25;
 
 
   constructor(private geolocation: Geolocation, private database: DatabaseService,
@@ -264,23 +264,23 @@ export class AwarenessService {
     return n * Math.PI / 180;
   }
 
-  //Decide if the user is standing, walking, driving and using public transportt
-  private async decideUserAction(pos: Geoposition){
+  //Decide if the user is standing, walking, driving and using public transport
+  private async decideUserAction(pos: Geoposition) {
     const currentSpeed = this._currentSpeed.value;
     const longitude = pos.coords.longitude;
     const latitude = pos.coords.latitude;
-    
-    if ( currentSpeed >= this.cyclingThreshold && currentSpeed < this.drivingThreshold ) {
+
+    if (currentSpeed >= this.cyclingThreshold && currentSpeed < this.drivingThreshold) {
       this._currentUserAction.next(UserAction.CYCLING);
-    } else if ( currentSpeed >= this.drivingThreshold && !this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) { 
+    } else if (currentSpeed >= this.drivingThreshold && !this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) {
       this._currentUserAction.next(UserAction.DRIVING);
-    } else if ( currentSpeed >= this.drivingThreshold && this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) {
+    } else if (currentSpeed >= this.drivingThreshold && this.publicTransPortGeoInformationService.findPointOnLineStrings(longitude, latitude)) {
       this._currentUserAction.next(UserAction.PUBLICTRANSPORT);
-    } else if ( currentSpeed > 1 && currentSpeed < this.cyclingThreshold){
+    } else if (currentSpeed > 1 && currentSpeed < this.cyclingThreshold) {
       this._currentUserAction.next(UserAction.WALKING);
     } else {
       this._currentUserAction.next(UserAction.STANDING);
-    }   
+    }
   }
 }
 
